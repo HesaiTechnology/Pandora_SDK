@@ -1,6 +1,3 @@
 [submodule "src/Pandar40P"]
 	path = src/Pandar40P
 	url = https://github.com/HesaiTechnology/Pandora_Apollo.git
-[submodule "src/camera_client"]
-	path = src/camera_client
-	url = https://github.com/HesaiTechnology/PandoraCameraClient.git
