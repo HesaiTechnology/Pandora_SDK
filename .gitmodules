@@ -1,0 +1,3 @@
+[submodule "src/Pandar40P"]
+	path = src/Pandar40P
+	url = https://github.com/HesaiTechnology/Pandora_Apollo.git
