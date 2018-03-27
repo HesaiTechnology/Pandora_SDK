@@ -6,7 +6,7 @@ find_package( Boost REQUIRED )
 find_package( PCL REQUIRED COMPONENTS common )
 find_package( OpenCV REQUIRED )
 
-set (CMAKE_CXX_FLAGS "-g -fPIC --std=c++11")
+set (CMAKE_CXX_FLAGS "-fPIC --std=c++11")
 
 add_subdirectory(src/Pandar40P)
 
@@ -24,6 +24,8 @@ add_library( ${PROJECT_NAME} SHARED
 	src/pandora.cc
 	src/pandora_client.c
 	src/pandora_camera.cc
+	src/util.c
+	src/tcp_command_client.c
 )
 
 target_link_libraries(${PROJECT_NAME} 
@@ -31,6 +33,7 @@ target_link_libraries(${PROJECT_NAME}
 		${Boost_LIBRARIES}
 		${PCL_IO_LIBRARIES}
 		${OpenCV_LIBS}
+		yaml-cpp
 		jpeg
 )
 
@@ -47,6 +50,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 		${Boost_LIBRARIES}
 		${PCL_IO_LIBRARIES}
 		${OpenCV_LIBS}
+		yaml-cpp
 		jpeg
 	)
 

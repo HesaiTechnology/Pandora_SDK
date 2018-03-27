@@ -14,14 +14,14 @@
  * limitations under the License.
  *****************************************************************************/
 
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <jpeglib.h>
 #include <vector>
 
-#include "src/pandora_client.h"
 #include "src/pandora_camera.h"
+#include "src/pandora_client.h"
 
 namespace apollo {
 namespace drivers {

@@ -17,15 +17,14 @@
 #ifndef INCLUDE_PANDORA_PANDORA_H_
 #define INCLUDE_PANDORA_PANDORA_H_
 
+#include <opencv2/highgui/highgui_c.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pthread.h>
 #include <semaphore.h>
-#include <opencv2/highgui/highgui_c.h>
 
-#include <vector>
 #include <string>
-
+#include <vector>
 
 #include <boost/function.hpp>
 #include <opencv2/opencv.hpp>
@@ -40,6 +39,16 @@ namespace hesai {
 
 class Pandora_Internal;
 
+class CameraCalibration {
+ public:
+  //  intrinsic
+  cv::Mat cameraK;
+  cv::Mat cameraD;
+  //  extrinsic
+  std::vector<double> cameraT;  //  w x y z
+  std::vector<double> cameraR;  //  x y z
+};
+
 class Pandora {
  public:
   /**
@@ -49,7 +58,9 @@ class Pandora {
    *        gps_port   				The port number of gps data
    *        pcl_callback      The callback of PCL data structure
    *        gps_callback      The callback of GPS structure
-   *        type       				The device type
+   *        start_angle       The start angle of every point cloud
+   *        pandoraCameraPort The port of camera data
+   *        cameraCallback    the call back for camera data
    */
   Pandora(std::string device_ip, const uint16_t lidar_port,
           const uint16_t gps_port,
@@ -60,29 +71,50 @@ class Pandora {
           boost::function<void(boost::shared_ptr<cv::Mat> matp,
                                double timestamp, int picid, bool distortion)>
               cameraCallback);
+  /**
+   * @brief deconstructor
+   */
   ~Pandora();
 
   /**
-   * @brief load the correction file
-   * @param file The path of correction file
+   * @brief load the lidar correction file
+   * @param contents The correction contents of lidar correction
    */
-  int LoadLidarCorrectionFile(std::string file);
+  int LoadLidarCorrectionFile(std::string contents);
 
   /**
-   * @brief load the correction file
+   * @brief Reset Lidar's start angle.
    * @param angle The start angle
    */
   void ResetLidarStartAngle(uint16_t start_angle);
 
-  int UploadCameraCalibration(const std::vector<cv::Mat> cameras_k,
-                              const std::vector<cv::Mat> cameras_d,
-                              double extrinsic[6]);
-  int GetCameraCalibration(std::vector<cv::Mat> *cameras_k,
-                           std::vector<cv::Mat> *cameras_d,
-                           double extrinsic[6]);
+  /**
+   * @brief Upload the camera calibration contents to Pandora Device.
+   * @param calibs calibration contents , include camera intrinsics and
+   * extrinsics.
+   */
+  int UploadCameraCalibration(const CameraCalibration calibs[5]);
+
+  /**
+   * @brief Get Camera's Calibration, include camera intrinsics and extrinsics.
+   * @param calibs calibration contents , include camera intrinsics and
+   * extrinsics.
+   */
+  int GetCameraCalibration(CameraCalibration calibs[5]);
+
+  /**
+   * @brief Reset camera calibration as factory-set.
+   */
   int ResetCameraClibration();
 
+  /**
+   * @brief Run SDK.
+   */
   int Start();
+
+  /**
+   * @brief Stop SDK.
+   */
   void Stop();
 
  private:
