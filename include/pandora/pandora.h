@@ -59,6 +59,7 @@ class Pandora {
    *        pcl_callback      The callback of PCL data structure
    *        gps_callback      The callback of GPS structure
    *        start_angle       The start angle of every point cloud
+   *                          should be <real angle> * 100.
    *        pandoraCameraPort The port of camera data
    *        cameraCallback    the call back for camera data
    */
