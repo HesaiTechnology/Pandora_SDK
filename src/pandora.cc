@@ -188,7 +188,6 @@ void Pandora_Internal::GetCalibrationFromDevice() {
       if (ret == 0 && buffer) {
         // success;
         got_lidar_calibration_ = true;
-        free(buffer);
         if (pandar40p_) {
           ret = pandar40p_->LoadCorrectionFile(std::string(buffer));
           if (ret != 0) {
@@ -198,6 +197,7 @@ void Pandora_Internal::GetCalibrationFromDevice() {
             std::cout << "Parse Lidar Correction Success!!!" << std::endl;
           }
         }
+        free(buffer);
       }
     }
 
@@ -215,6 +215,7 @@ void Pandora_Internal::GetCalibrationFromDevice() {
           std::cout << "Parse Camera Calibration Success!!!" << std::endl;
         } else {
           std::cout << "Parse Camera Calibration Error" << std::endl;
+          free(buffer);
           continue;
         }
 
