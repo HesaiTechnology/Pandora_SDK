@@ -314,10 +314,10 @@ int Pandora_Internal::GenerateCameraCalibration(
   YAML::Node node;
   for (int id = 0; id < 5; ++id) {
     YAML::Node nodeK, nodeD, nodeT, nodeR;
-    nodeK.SetStyle(YAML::EmitterStyle::Flow);
-    nodeD.SetStyle(YAML::EmitterStyle::Flow);
-    nodeT.SetStyle(YAML::EmitterStyle::Flow);
-    nodeR.SetStyle(YAML::EmitterStyle::Flow);
+    //nodeK.SetStyle(YAML::EmitterStyle::Flow);
+    //nodeD.SetStyle(YAML::EmitterStyle::Flow);
+    //nodeT.SetStyle(YAML::EmitterStyle::Flow);
+    //nodeR.SetStyle(YAML::EmitterStyle::Flow);
     std::string id_str = boost::lexical_cast<std::string>(id);
     int rowsK = calibs[id].cameraK.rows;
     int colsK = calibs[id].cameraK.cols;
