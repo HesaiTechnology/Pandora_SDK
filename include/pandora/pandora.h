@@ -31,7 +31,7 @@
 
 #include "pandar40p/pandar40p.h"
 #include "pandar40p/point_types.h"
-#include "src/pandora_camera.h"
+
 
 namespace apollo {
 namespace drivers {
