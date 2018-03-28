@@ -17,6 +17,7 @@
 #include "pandora/pandora.h"
 #include "src/pandora_client.h"
 #include "src/tcp_command_client.h"
+#include "src/pandora_camera.h"
 #include "yaml-cpp/yaml.h"
 
 namespace apollo {
