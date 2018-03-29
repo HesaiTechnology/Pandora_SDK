@@ -198,8 +198,8 @@ void Pandora_Internal::GetCalibrationFromDevice() {
          !got_camera_calibration_) {
     if (!got_lidar_calibration_) {
       // get lidar calibration.
-      char *buffer;
-      uint32_t len;
+      char *buffer = NULL;
+      uint32_t len = 0;
 
       ret = TcpCommandGetLidarCalibration(tcp_command_client_, &buffer, &len);
       if (ret == 0 && buffer) {
@@ -224,8 +224,8 @@ void Pandora_Internal::GetCalibrationFromDevice() {
 
     if (!got_camera_calibration_) {
       // get camera calibration.
-      char *buffer;
-      uint32_t len;
+      char *buffer = NULL;
+      uint32_t len = 0;
 
       ret = TcpCommandGetCalibration(tcp_command_client_, &buffer, &len);
       if (ret == 0 && buffer) {

@@ -149,7 +149,6 @@ static PTC_ErrCode tcpCommandClient_SendCmd(TcpCommandClient* client,
   pthread_mutex_lock(&client->lock);
   int fd = tcp_open(client->ip, client->port);
   if (fd < 0) {
-    printf("Connect to Server Failed\n");
     pthread_mutex_unlock(&client->lock);
     return PTC_ERROR_CONNECT_SERVER_FAILED;
   }
@@ -237,7 +236,6 @@ PTC_ErrCode TcpCommandSetCalibration(const void* handle, const char* buffer,
 
   PTC_ErrCode errorCode = tcpCommandClient_SendCmd(client, &cmd);
   if (errorCode != PTC_ERROR_NO_ERROR) {
-    printf("Set Calibration Failed\n");
     free(cmd.data);
     return errorCode;
   }
@@ -267,7 +265,6 @@ PTC_ErrCode TcpCommandGetCalibration(const void* handle, char** buffer,
 
   PTC_ErrCode errorCode = tcpCommandClient_SendCmd(client, &cmd);
   if (errorCode != PTC_ERROR_NO_ERROR) {
-    printf("Set Calibration Failed\n");
     return errorCode;
   }
 
@@ -298,7 +295,6 @@ PTC_ErrCode TcpCommandGetLidarCalibration(const void* handle, char** buffer,
 
   PTC_ErrCode errorCode = tcpCommandClient_SendCmd(client, &cmd);
   if (errorCode != PTC_ERROR_NO_ERROR) {
-    printf("Set Calibration Failed\n");
     return errorCode;
   }
 
@@ -329,7 +325,6 @@ PTC_ErrCode TcpCommandResetCalibration(const void* handle) {
 
   PTC_ErrCode errorCode = tcpCommandClient_SendCmd(client, &cmd);
   if (errorCode != PTC_ERROR_NO_ERROR) {
-    printf("Set Calibration Failed\n");
     return errorCode;
   }
 
