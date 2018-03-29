@@ -71,7 +71,7 @@ class Pandora {
           const uint16_t pandoraCameraPort,
           boost::function<void(boost::shared_ptr<cv::Mat> matp,
                                double timestamp, int picid, bool distortion)>
-              cameraCallback);
+              cameraCallback, bool enable_camera = true , int tz = 0 , std::string frame_id = std::string("hesai40"));
   /**
    * @brief deconstructor
    */

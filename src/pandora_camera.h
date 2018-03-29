@@ -55,7 +55,7 @@ class PandoraCamera {
       boost::function<void(boost::shared_ptr<cv::Mat> matp, double timestamp,
                            int picid, bool distortion)>
           camera_callback,
-      boost::function<void(bool connected)> connection_changed);
+      boost::function<void(bool connected)> connection_changed , int tz);
   ~PandoraCamera();
 
   /**
@@ -97,6 +97,8 @@ class PandoraCamera {
                        int pic_id, bool distortion)>
       camera_callback_;
   boost::function<void(bool connected)> connection_changed_;
+
+  int tz_second_;
 };
 
 }  // namespace hesai

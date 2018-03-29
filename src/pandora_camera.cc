@@ -42,7 +42,7 @@ PandoraCamera::PandoraCamera(
     boost::function<void(boost::shared_ptr<cv::Mat> matp, double timestamp,
                          int picid, bool distortion)>
         camera_callback,
-    boost::function<void(bool connected)> connectionChanged) {
+    boost::function<void(bool connected)> connectionChanged , int tz) {
   ip_ = device_ip;
   sem_init(&pic_sem_, 0, 0);
   pthread_mutex_init(&pic_lock_, NULL);
@@ -53,6 +53,7 @@ PandoraCamera::PandoraCamera(
   pandora_client_ = NULL;
   camera_callback_ = camera_callback;
   connection_changed_ = connectionChanged;
+  tz_second_ = tz * 3600;
 }
 
 PandoraCamera::~PandoraCamera() {
@@ -167,7 +168,7 @@ void PandoraCamera::processPic() {
     if (camera_callback_) {
       // Add 2 seconds to correct the timestamp, Reason? No reason.
       // liuxingwei@hesaitech.com
-      camera_callback_(cvMatPic, timestamp + 2, pic->header.pic_id,
+      camera_callback_(cvMatPic, timestamp + 2 + tz_second_, pic->header.pic_id,
                        need_remap_);
     }
     free(pic->yuv);

@@ -35,7 +35,7 @@ void gpsCallback(int timestamp) {
 void lidarCallback(boost::shared_ptr<PPointCloud> cld, double timestamp) {
   struct timeval ts;
   gettimeofday(&ts, NULL);
-  printf("lidar: %lf\n", timestamp);
+  printf("lidar: %lf with frame id : %s \n", timestamp , cld->header.frame_id.c_str());
   // fprintf(lidarTimestampFile, "%d, %f,%f\n", gpsTimestamp, timestamp,
   //         ts.tv_sec + (double)ts.tv_usec / 1000000 - pandoraToSysTimeGap -
   //             timestamp);
@@ -47,8 +47,8 @@ void cameraCallback(boost::shared_ptr<cv::Mat> matp, double timestamp,
 }
 
 int main(int argc, char** argv) {
-  Pandora pandora(std::string("192.168.20.51"), 2368, 10110, lidarCallback,
-                  gpsCallback, 13500, 9870, cameraCallback);
+  Pandora pandora(std::string("172.168.20.51"), 2368, 10110, lidarCallback,
+                  gpsCallback, 13500, 9870, cameraCallback , 1 , 0 , std::string("hesai40"));
   pandora.Start();
   while (true) {
     sleep(100);
