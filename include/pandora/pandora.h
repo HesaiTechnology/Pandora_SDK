@@ -32,7 +32,6 @@
 #include "pandar40p/pandar40p.h"
 #include "pandar40p/point_types.h"
 
-
 namespace apollo {
 namespace drivers {
 namespace hesai {
@@ -71,7 +70,9 @@ class Pandora {
           const uint16_t pandoraCameraPort,
           boost::function<void(boost::shared_ptr<cv::Mat> matp,
                                double timestamp, int picid, bool distortion)>
-              cameraCallback, bool enable_camera = true , int tz = 0 , std::string frame_id = std::string("hesai40"));
+              cameraCallback,
+          bool enable_camera = true, int tz = 0,
+          std::string frame_id = std::string("hesai40"));
   /**
    * @brief deconstructor
    */

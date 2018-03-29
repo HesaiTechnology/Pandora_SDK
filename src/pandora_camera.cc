@@ -42,7 +42,7 @@ PandoraCamera::PandoraCamera(
     boost::function<void(boost::shared_ptr<cv::Mat> matp, double timestamp,
                          int picid, bool distortion)>
         camera_callback,
-    boost::function<void(bool connected)> connectionChanged , int tz) {
+    boost::function<void(bool connected)> connectionChanged, int tz) {
   ip_ = device_ip;
   sem_init(&pic_sem_, 0, 0);
   pthread_mutex_init(&pic_lock_, NULL);

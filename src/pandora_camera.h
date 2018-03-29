@@ -55,7 +55,7 @@ class PandoraCamera {
       boost::function<void(boost::shared_ptr<cv::Mat> matp, double timestamp,
                            int picid, bool distortion)>
           camera_callback,
-      boost::function<void(bool connected)> connection_changed , int tz);
+      boost::function<void(bool connected)> connection_changed, int tz);
   ~PandoraCamera();
 
   /**

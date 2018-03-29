@@ -15,9 +15,9 @@
  *****************************************************************************/
 
 #include "pandora/pandora.h"
+#include "src/pandora_camera.h"
 #include "src/pandora_client.h"
 #include "src/tcp_command_client.h"
-#include "src/pandora_camera.h"
 #include "yaml-cpp/yaml.h"
 
 namespace apollo {
@@ -36,7 +36,8 @@ class Pandora_Internal {
       const uint16_t pandoraCameraPort,
       boost::function<void(boost::shared_ptr<cv::Mat> matp, double timestamp,
                            int picid, bool distortion)>
-          cameraCallback, bool enable_camera , int tz, std::string frame_id);
+          cameraCallback,
+      bool enable_camera, int tz, std::string frame_id);
   ~Pandora_Internal();
   int LoadLidarCorrectionFile(std::string correction_content);
   void ResetLidarStartAngle(uint16_t start_angle);
@@ -73,18 +74,18 @@ Pandora_Internal::Pandora_Internal(
     const uint16_t pandoraCameraPort,
     boost::function<void(boost::shared_ptr<cv::Mat> matp, double timestamp,
                          int picid, bool distortion)>
-        cameraCallback,bool enable_camera, int tz, std::string frame_id) {
-
+        cameraCallback,
+    bool enable_camera, int tz, std::string frame_id) {
   enable_camera_ = enable_camera;
   pandora_camera_ = NULL;
   pandar40p_ = NULL;
 
   pandar40p_ = new Pandar40P(device_ip, lidar_port, gps_port, pcl_callback,
-                             gps_callback, start_angle , tz , frame_id);
+                             gps_callback, start_angle, tz, frame_id);
 
-  if(enable_camera_){
-    pandora_camera_ =
-        new PandoraCamera(device_ip, pandoraCameraPort, cameraCallback, NULL , tz);
+  if (enable_camera_) {
+    pandora_camera_ = new PandoraCamera(device_ip, pandoraCameraPort,
+                                        cameraCallback, NULL, tz);
   }
 
   tcp_command_client_ =
@@ -97,7 +98,6 @@ Pandora_Internal::Pandora_Internal(
 
   got_lidar_calibration_ = false;
   got_camera_calibration_ = false;
-
 }
 
 Pandora_Internal::~Pandora_Internal() {
@@ -130,22 +130,22 @@ void Pandora_Internal::ResetLidarStartAngle(uint16_t start_angle) {
 
 int Pandora_Internal::Start() {
   Stop();
-  if(pandora_camera_){
+  if (pandora_camera_) {
     pandora_camera_->Start();
   }
-  
-  if(pandar40p_){
+
+  if (pandar40p_) {
     pandar40p_->Start();
   }
-  
+
   enable_get_calibration_thr_ = true;
   get_calibration_thr_ = new boost::thread(
       boost::bind(&Pandora_Internal::GetCalibrationFromDevice, this));
 }
 
 void Pandora_Internal::Stop() {
-  if(pandar40p_)  pandar40p_->Stop();
-  if(pandora_camera_)  pandora_camera_->Stop();
+  if (pandar40p_) pandar40p_->Stop();
+  if (pandora_camera_) pandora_camera_->Stop();
 
   enable_get_calibration_thr_ = false;
   if (get_calibration_thr_) {
@@ -218,10 +218,9 @@ void Pandora_Internal::GetCalibrationFromDevice() {
       }
     }
 
-    // If got lidar's calibration , and camera is disabled 
+    // If got lidar's calibration , and camera is disabled
     // stop to get camera's calibration
-    if(!enable_camera_ && got_lidar_calibration_) 
-      break;
+    if (!enable_camera_ && got_lidar_calibration_) break;
 
     if (!got_camera_calibration_) {
       // get camera calibration.
@@ -338,10 +337,10 @@ int Pandora_Internal::GenerateCameraCalibration(
   YAML::Node node;
   for (int id = 0; id < 5; ++id) {
     YAML::Node nodeK, nodeD, nodeT, nodeR;
-    //nodeK.SetStyle(YAML::EmitterStyle::Flow);
-    //nodeD.SetStyle(YAML::EmitterStyle::Flow);
-    //nodeT.SetStyle(YAML::EmitterStyle::Flow);
-    //nodeR.SetStyle(YAML::EmitterStyle::Flow);
+    // nodeK.SetStyle(YAML::EmitterStyle::Flow);
+    // nodeD.SetStyle(YAML::EmitterStyle::Flow);
+    // nodeT.SetStyle(YAML::EmitterStyle::Flow);
+    // nodeR.SetStyle(YAML::EmitterStyle::Flow);
     std::string id_str = boost::lexical_cast<std::string>(id);
     int rowsK = calibs[id].cameraK.rows;
     int colsK = calibs[id].cameraK.cols;
@@ -397,10 +396,11 @@ Pandora::Pandora(
     const uint16_t pandoraCameraPort,
     boost::function<void(boost::shared_ptr<cv::Mat> matp, double timestamp,
                          int picid, bool distortion)>
-        cameraCallback, bool enable_camera, int tz, std::string frame_id) {
-  internal_ = new Pandora_Internal(device_ip, lidar_port, gps_port,
-                                   pcl_callback, gps_callback, start_angle,
-                                   pandoraCameraPort, cameraCallback , enable_camera , tz , frame_id);
+        cameraCallback,
+    bool enable_camera, int tz, std::string frame_id) {
+  internal_ = new Pandora_Internal(
+      device_ip, lidar_port, gps_port, pcl_callback, gps_callback, start_angle,
+      pandoraCameraPort, cameraCallback, enable_camera, tz, frame_id);
 }
 
 /**
