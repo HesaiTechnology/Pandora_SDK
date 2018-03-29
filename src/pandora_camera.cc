@@ -157,11 +157,14 @@ void PandoraCamera::processPic() {
                 mapy_[pic->header.pic_id], CV_INTER_LINEAR);
 
         free(bmp);
+        bmp = NULL;
         break;
 
       default:
         free(pic->yuv);
+        pic->yuv = NULL;
         free(pic);
+        pic = NULL;
         printf("wrong pic id\n");
         return;
     }
@@ -172,8 +175,8 @@ void PandoraCamera::processPic() {
                        need_remap_);
     }
     free(pic->yuv);
-    free(pic);
     pic->yuv = NULL;
+    free(pic);
     pic = NULL;
   }
 }
