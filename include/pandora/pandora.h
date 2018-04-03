@@ -44,8 +44,8 @@ class CameraCalibration {
   cv::Mat cameraK;
   cv::Mat cameraD;
   //  extrinsic
-  std::vector<double> cameraT;  //  w x y z
-  std::vector<double> cameraR;  //  x y z
+  std::vector<double> cameraT;  //  x y z
+  std::vector<double> cameraR;  //  q0(w) q1(x) q2(y) q3(z)
 };
 
 class Pandora {
