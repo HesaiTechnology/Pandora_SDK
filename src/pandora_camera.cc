@@ -44,9 +44,14 @@ PandoraCamera::PandoraCamera(
         camera_callback,
     boost::function<void(bool connected)> connectionChanged, int tz) {
   ip_ = device_ip;
-  sem_init(&pic_sem_, 0, 0);
-  pthread_mutex_init(&pic_lock_, NULL);
-  process_pic_thread_ = NULL;
+
+  for (int i = 0; i < CAMERA_NUM; ++i) {
+    /* init pic lock / sem  */
+    sem_init(&pic_sem_[i], 0, 0);
+    pthread_mutex_init(&pic_lock_[i], NULL);
+    process_pic_thread_[i] = NULL;
+  }
+  
   continue_process_pic_ = false;
   need_remap_ = false;
   camera_port_ = pandoraCameraPort;
@@ -58,8 +63,11 @@ PandoraCamera::PandoraCamera(
 
 PandoraCamera::~PandoraCamera() {
   Stop();
-  sem_destroy(&pic_sem_);
-  pthread_mutex_destroy(&pic_lock_);
+  for (int i = 0; i < CAMERA_NUM; ++i)
+  {
+    sem_destroy(&pic_sem_[i]);
+    pthread_mutex_destroy(&pic_lock_[i]);
+  }
 }
 
 int PandoraCamera::Start() {
@@ -71,12 +79,16 @@ int PandoraCamera::Start() {
     continue_process_pic_ = false;
     return -1;
   }
-  process_pic_thread_ =
-      new boost::thread(boost::bind(&PandoraCamera::processPic, this));
-  if (!process_pic_thread_) {
-    continue_process_pic_ = false;
-    PandoraClientDestroy(pandora_client_);
-    return -1;
+
+  for (int i = 0; i < CAMERA_NUM; ++i) {
+    process_pic_thread_[i] =
+        new boost::thread(boost::bind(&PandoraCamera::processPic, this , i));
+    if (!process_pic_thread_[i]) {
+      continue_process_pic_ = false;
+      PandoraClientDestroy(pandora_client_);
+      pandora_client_ = NULL;
+      return -1;
+    }
   }
   return 0;
 }
@@ -88,21 +100,24 @@ void PandoraCamera::Stop() {
   }
   pandora_client_ = NULL;
 
-  if (process_pic_thread_) {
-    process_pic_thread_->join();
-    delete process_pic_thread_;
+  for (int i = 0; i < CAMERA_NUM; ++i) {
+    if (process_pic_thread_[i]) {
+      process_pic_thread_[i]->join();
+      delete process_pic_thread_[i];
+    }
+    process_pic_thread_[i] = NULL;
   }
-  process_pic_thread_ = NULL;
+  
 }
 
 void PandoraCamera::pushPicture(PandoraPic *pic) {
-  pthread_mutex_lock(&pic_lock_);
-  pic_list_.push_back(pic);
-  pthread_mutex_unlock(&pic_lock_);
-  sem_post(&pic_sem_);
+  pthread_mutex_lock(&pic_lock_[pic->header.pic_id]);
+  pic_list_[pic->header.pic_id].push_back(pic);
+  pthread_mutex_unlock(&pic_lock_[pic->header.pic_id]);
+  sem_post(&pic_sem_[pic->header.pic_id]);
 }
 
-void PandoraCamera::processPic() {
+void PandoraCamera::processPic(int pic_id) {
   while (continue_process_pic_) {
     struct timespec ts;
     if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
@@ -110,14 +125,14 @@ void PandoraCamera::processPic() {
     }
 
     ts.tv_sec += 1;
-    if (sem_timedwait(&pic_sem_, &ts) == -1) {
+    if (sem_timedwait(&pic_sem_[pic_id], &ts) == -1) {
       continue;
     }
 
-    pthread_mutex_lock(&pic_lock_);
-    PandoraPic *pic = pic_list_.front();
-    pic_list_.pop_front();
-    pthread_mutex_unlock(&pic_lock_);
+    pthread_mutex_lock(&pic_lock_[pic_id]);
+    PandoraPic *pic = pic_list_[pic_id].front();
+    pic_list_[pic_id].pop_front();
+    pthread_mutex_unlock(&pic_lock_[pic_id]);
 
     if (pic == NULL) {
       printf("pic is NULL\n");
@@ -136,12 +151,13 @@ void PandoraCamera::processPic() {
     boost::shared_ptr<cv::Mat> cvMatPic(new cv::Mat());
     switch (pic->header.pic_id) {
       case 0:
-        yuv422ToCvmat(cvMatPic, pic->yuv, pic->header.width, pic->header.height,
-                      8);
-        if (need_remap_)
-          remap(cvMatPic->clone(), *cvMatPic, mapx_[pic->header.pic_id],
-                mapy_[pic->header.pic_id], CV_INTER_LINEAR);
-        break;
+        // yuv422ToCvmat(cvMatPic, pic->yuv, pic->header.width, pic->header.height,
+        //               8);
+        // if (need_remap_)
+        //   remap(cvMatPic->clone(), *cvMatPic, mapx_[pic->header.pic_id],
+        //         mapy_[pic->header.pic_id], CV_INTER_LINEAR);
+        // break;
+
       case 1:
       case 2:
       case 3:
