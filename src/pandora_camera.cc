@@ -151,6 +151,12 @@ void PandoraCamera::processPic(int pic_id) {
     boost::shared_ptr<cv::Mat> cvMatPic(new cv::Mat());
     switch (pic->header.pic_id) {
       case 0:
+        //yuv422ToCvmat(cvMatPic, pic->yuv, pic->header.width, pic->header.height,
+        //              8);
+        //if (need_remap_)
+        //  remap(cvMatPic->clone(), *cvMatPic, mapx_[pic->header.pic_id],
+        //        mapy_[pic->header.pic_id], CV_INTER_LINEAR);
+        //break;
       case 1:
       case 2:
       case 3:
@@ -178,8 +184,6 @@ void PandoraCamera::processPic(int pic_id) {
         return;
     }
     if (camera_callback_) {
-      // Add 2 seconds to correct the timestamp, Reason? No reason.
-      // liuxingwei@hesaitech.com
       camera_callback_(cvMatPic, timestamp + tz_second_, pic->header.pic_id,
                        need_remap_);
     }
