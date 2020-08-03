@@ -1,7 +1,7 @@
-# Pandora_Apollo
+# Pandora_SDK
 ## Clone
 ```
-git clone https://github.com/HesaiTechnology/Pandora_Apollo.git --recursive
+git clone https://github.com/HesaiTechnology/Pandora_SDK.git --recursive
 ```
 
 ## Build
@@ -16,8 +16,8 @@ cmake .. ; make
 add_subdirectory(<path_to>Pandora_Apollo)
 
 include_directories(
-	<path_to>Pandora_Apollo/include
-	<path_to>Pandora_Apollo/src/Pandar40P/include
+	<path_to>Pandora_SDK/include
+	<path_to>Pandora_SDK/src/Pandar40P/include
 )
 
 target_link_libraries(<Your project>
