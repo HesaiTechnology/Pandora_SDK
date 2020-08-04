@@ -13,7 +13,7 @@ cmake .. ; make
 ## Add to your project 
 ### Cmake
 ```
-add_subdirectory(<path_to>Pandora_Apollo)
+add_subdirectory(<path_to>Pandora_SDK)
 
 include_directories(
 	<path_to>Pandora_SDK/include
